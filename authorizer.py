@@ -73,6 +73,5 @@ _f = open("tokens.txt", "r").readlines()
 
 for _tk in _f:
   _tk = _tk.strip()
-  _tk = _tk.split(":")[2]
   time.sleep(0.01)
   threading.Thread(target=authorize, args=(_tk,)).start()
