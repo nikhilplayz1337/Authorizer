@@ -67,7 +67,7 @@ def authorize(token):
         continue
       else:
         break
-      # return
+      # return x
 
 _f = open("tokens.txt", "r").readlines()
 
