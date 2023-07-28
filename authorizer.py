@@ -13,7 +13,7 @@ print(Fore.LIGHTMAGENTAEX ,f"""
 
 auth_url = input ("Auth Bot Url-")
 
-import requests, threading, time, ctypes
+import tls, threading, time, ctypes
 from colorama import Fore
 
 count = 0 ; genStartTime = time.time()
