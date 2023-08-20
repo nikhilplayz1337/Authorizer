@@ -1,19 +1,29 @@
 from colorama import Fore
 from colr import color
+import tls_client
+import os
+import pystyle
+import random
 
-print(Fore.LIGHTMAGENTAEX ,f"""
 
-          __      _      _    __
-         /  / __/   |  /  |/  /     /   |  /  /
-          / / / / / /| | / /|/ /__/ /| |  / /  
-         / / / //  |/ /  / /_/  |/ /   
-        // /__//  |//  //     //  |/___/   
+banner = F"""
+                              _______________    __  ___      ___    ____
+                             /_  __/ ____/   |  /  |/  /     /   |  /  _/
+                              / / / __/ / /| | / /|_/ /_____/ /| |  / /  
+                             / / / /___/ ___ |/ /  / /_____/ ___ |_/ /   
+                            /_/ /_____/_/  |_/_/  /_/     /_/  |_/___/  
 
-""")
+        """
+a = [pystyle.Colors.green_to_white]
+os.system("cls")
+spl = banner.split("\n")
+cho = random.choice(a)
+for x in spl:
+    print(" "  + pystyle.Colorate.Horizontal(cho, x)) 
 
 auth_url = input ("Auth Bot Url-")
 
-import tls, threading, time, ctypes
+import requests, threading, time, ctypes
 from colorama import Fore
 
 count = 0 ; genStartTime = time.time()
@@ -23,7 +33,7 @@ def title():
 
 def get_headers(tk):
     headers = {
-                "accept": "/",
+                "accept": "*/*",
                 # "accept-encoding": "gzip, deflate, br",
                 "accept-language": "en-US",
                 "authorization": tk,
@@ -38,40 +48,43 @@ def get_headers(tk):
     }
     return headers
 
+
 def authorize(token):
+  session = tls_client.Session(client_identifier='chrome_112')
   global count
   while True:
     try:
       headers = get_headers(token)
-      r = requests.post(auth_url, headers=headers, json={"authorize": "true"})
+      r = session.post(auth_url, headers=headers, json={"authorize": "true"})
       # print(r.text)
       if r.status_code in (200, 201, 204):
         if 'location' in r.text:
           location = r.json()['location']
           requests.get(location)
-          print(count, Fore.MAGENTA ,f"[Success]: Successfully Authorized:", token[:22])
+          print(count, Fore.MAGENTA ,f"[Success]:{Fore.LIGHTWHITE_EX} Successfully Authorized:", token[:22])
           count += 1
           title()
 
           break
         else:
-          print(Fore.LIGHTRED_EX ,f"[ERROR]: Failed to Authorize:", token, r.text)
+          print(Fore.LIGHTRED_EX ,f"[ERROR]:{Fore.LIGHTWHITE_EX} Failed to Authorize:", token, r.text)
           break
       else:
-        print(Fore.RED ,f"[ERROR]: Failed to Authorize:", token, r.text)
+        print(Fore.RED ,f"[ERROR]:{Fore.LIGHTWHITE_EX} Failed to Authorize:", token, r.text)
         break
     except Exception as e:
-      print(Fore.YELLOW ,f"[ERROR]: Failed to Authorize:", token, e)
+      print(Fore.YELLOW ,f"[ERROR]:{Fore.LIGHTWHITE_EX} Failed to Authorize:", token, e)
       if "connection" in str(e):
         time.sleep(0.5)
         continue
       else:
         break
-      # return x
+      # return
 
 _f = open("tokens.txt", "r").readlines()
 
-for _tk in _f:
-  _tk = _tk.strip()
+for token in _f:
+  token = token.strip()
+  token = token.split(":")[2]
   time.sleep(0.01)
-  threading.Thread(target=authorize, args=(_tk,)).start()
+  threading.Thread(target=authorize, args=(token,)).start()
